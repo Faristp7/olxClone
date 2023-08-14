@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import SignUp from "./SignUp";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Header() {
   const [modal, setModal] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const showModal = () => {
     setModal(true);
@@ -46,7 +48,7 @@ export default function Header() {
             onClick={showModal}
             className="font-bold mt-2 underline ml-7 cursor-pointer hover:no-underline"
           >
-            Login
+            {user.login ? user.name : "Login"}
           </p>
           <button className="relative font-bold ml-5 rounded-full px-6 uppercase cursor-pointer shadow-lg overflow-hidden">
             <i className="fa-solid fa-plus fa-lg"></i> Sell
