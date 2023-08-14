@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
 
 export default function SignUp({ setModal }) {
   const [mailSign, showMailSign] = useState(true);
@@ -14,6 +15,7 @@ export default function SignUp({ setModal }) {
   const [errMsg, setErrMsg] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const { loginRefresh ,reloadPage} = useContext(AuthContext);
 
   const handleLoginEmail = (event) => {
     setLoginEmail(event.target.value);
@@ -27,9 +29,10 @@ export default function SignUp({ setModal }) {
     axios
       .post("/login", { loginEmail, loginPassword })
       .then(({ data }) => {
-        if (data === true) {
-          console.log(data);
-          onclose()
+        console.log(data);
+        if (data.data) {
+          reloadPage(!loginRefresh)
+          onclose();
         }
       })
       .catch((err) => {
@@ -70,7 +73,7 @@ export default function SignUp({ setModal }) {
             }, 3000);
           }
           if (data === true) {
-            onclose()
+            onclose();
           }
         })
         .catch((err) => {

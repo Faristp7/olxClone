@@ -1,18 +1,31 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SignUp from "./SignUp";
+import Logout from "./logout";
 import { AuthContext } from "../context/AuthContext";
 
 export default function Header() {
   const [modal, setModal] = useState(false);
-  const { user } = useContext(AuthContext);
+  const [logOut ,setLogout] = useState(false)
+  const { user ,reloadPage} = useContext(AuthContext);
+  const [userName , setUserName] = useState('login')
 
+  useEffect(() => {
+    if(user?.name){
+      setUserName(user?.name)
+    }
+  },[reloadPage])
   const showModal = () => {
     setModal(true);
   };
 
+  const showLogOut = () => {
+    setLogout(!logOut)
+  }
+
   return (
     <>
       {modal ? <SignUp setModal={setModal} /> : ""}
+      {logOut ? <Logout setLogout={setLogout} /> : ''}
       <div className="bg-gray-100">
         <div className="flex justify-between py-3 px-28">
           <div>
@@ -45,10 +58,10 @@ export default function Header() {
           <h4 className="font-semibold mt-2 ml-5 mr-2">ENGLISH</h4>
           <i className="fa-solid fa-angle-down fa-xl mt-5"></i>
           <p
-            onClick={showModal}
+            onClick={user.login ? showLogOut : showModal}
             className="font-bold mt-2 underline ml-7 cursor-pointer hover:no-underline"
           >
-            {user.login ? user.name : "Login"}
+            {userName}
           </p>
           <button className="relative font-bold ml-5 rounded-full px-6 uppercase cursor-pointer shadow-lg overflow-hidden">
             <i className="fa-solid fa-plus fa-lg"></i> Sell
