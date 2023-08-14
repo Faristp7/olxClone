@@ -1,9 +1,20 @@
 import React, { useState } from "react";
+import axios from 'axios'
 
 export default function SignUp({ setModal }) {
   const [mailSign, showMailSign] = useState(true);
   const [signUp ,showSignUpPage] = useState(true)
   const [login ,showLoginPage] = useState(true)
+  const [email, setEmail] = useState('')
+
+  const handleInputChange = (event) => {
+    setEmail(event.target.value)
+    console.log(email);
+  }
+
+  const handleSubmit = () => {
+    axios.post('/register',{email})
+  }
 
   function onclose() {
     setModal(false);
@@ -109,13 +120,15 @@ export default function SignUp({ setModal }) {
         </div>
         <div className="flex flex-col flex-1">
           <input
+          value={email}
+          onChange={handleInputChange}
             type="text"
             placeholder="Enter your Email address"
             className="border border-gray-600 rounded-md w-96 pl-2 py-2"
           />
         </div>
         <div className="flex flex-1 mt-16">
-          <button className="bg-cyan-950 text-white py-2 font-bold rounded-sm flex-1">
+          <button className="bg-cyan-950 text-white py-2 font-bold rounded-sm flex-1" onClick={handleSubmit}>
             Next
           </button>
         </div>

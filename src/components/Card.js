@@ -1,6 +1,7 @@
 import React from "react";
 
 export default function Card() {
+
   return (
     <div className="px-32 py-5">
       <div>
