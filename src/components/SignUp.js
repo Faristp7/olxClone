@@ -6,14 +6,48 @@ export default function SignUp({ setModal }) {
   const [signUp ,showSignUpPage] = useState(true)
   const [login ,showLoginPage] = useState(true)
   const [email, setEmail] = useState('')
+  const [isValidEmail ,setIsValidEmail] = useState(true)
+  const [password ,setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordsMatch , setPasswordsMatch] = useState(true)
+  const [name , setName] = useState('')
+  const [errMsg , setErrMsg] = useState(false)
+
+  const handleName = (event) => {
+    setName(event.target.value)
+  }
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value)
+  }
+
+  const handleConfirmPasswordChange = (event) => {
+    setConfirmPassword(event.target.value)
+    setPasswordsMatch(event.target.value === password)
+  }
 
   const handleInputChange = (event) => {
-    setEmail(event.target.value)
-    console.log(email);
+    const inputValue = event.target.value
+    setEmail(inputValue)
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setIsValidEmail(emailRegex.test(inputValue))
   }
 
   const handleSubmit = () => {
-    axios.post('/register',{email})
+    if (isValidEmail && passwordsMatch) {
+      axios.post('/register',{email ,password ,name})
+      .then(({data}) => {
+        if(data === 'Already Exist'){
+          setErrMsg(true)
+          setTimeout(() => {
+            setErrMsg(false)
+          }, 3000);
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    }
   }
 
   function onclose() {
@@ -118,21 +152,49 @@ export default function SignUp({ setModal }) {
             Enter your Email address
           </p>
         </div>
+        <div className="flex flex-col flex-1 mb-3">
+          <input
+          value={name}
+          onChange={handleName}
+            type="text"
+            placeholder="Enter your name"
+            className="border  rounded-md w-96 pl-2 py-2 border-gray-600"
+          />
+        </div>
         <div className="flex flex-col flex-1">
           <input
           value={email}
           onChange={handleInputChange}
-            type="text"
+            type="email"
             placeholder="Enter your Email address"
-            className="border border-gray-600 rounded-md w-96 pl-2 py-2"
+            className={`border  rounded-md w-96 pl-2 py-2 ${isValidEmail ? `border-gray-600` : `border-red-500`} `}
           />
         </div>
+        <div className="flex flex-col flex-1 my-3">
+          <input
+          value={password}
+          onChange={handlePasswordChange}
+            type="password"
+            placeholder="Enter Password"
+            className="border  rounded-md w-96 pl-2 py-2 border-gray-600"
+          />
+        </div>
+        <div className="flex flex-col flex-1">
+          <input
+          value={confirmPassword}
+          onChange={handleConfirmPasswordChange}
+            type="password"
+            placeholder="Re-Enter Password"
+            className={`border rounded-md w-96 pl-2 py-2 ${passwordsMatch ? `border-gray-600` : ` border-red-500`} `}
+          />
+        </div>
+        <p className="text-center text-red-500 mt-5">{errMsg ? 'User Already Exist' : '' }</p>
         <div className="flex flex-1 mt-16">
           <button className="bg-cyan-950 text-white py-2 font-bold rounded-sm flex-1" onClick={handleSubmit}>
             Next
           </button>
         </div>
-        <div className="text-center text-gray-500 text-xs mt-2 mb-52">
+        <div className="text-center text-gray-500 text-xs mt-2 mb-8">
           <p>
             Your contact number is never shared with external parties <br /> not
             do we use it to spam you in any way.
